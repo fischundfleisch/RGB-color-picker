@@ -1,0 +1,104 @@
+// Allein für diesen Zustand verantwortlich: KSMA
+
+
+#include <LiquidCrystal.h>
+
+LiquidCrystal lcd(22,23,24,25,26,27);
+
+const int RED_LED_PIN = 2;
+const int GREEN_LED_PIN = 3;
+const int BLUE_LED_PIN = 4;
+
+const int S1_PIN = 5;
+const int S2_PIN = 6;
+const int S3_PIN = 7;
+
+bool S1_wasPressed = false;
+bool S2_wasPressed = false;
+bool S3_wasPressed = false;
+
+int i = 0;
+int j = 0;
+int k = 0;
+
+void setup() {
+  Serial.begin(9600);
+  lcd.begin(16,2);
+  lcd.setCursor(0,0);
+  lcd.print("Aufgabe 13 KSMA");
+  lcd.setCursor(0,1);
+  lcd.print("Helligkeitssteuerung");
+
+  delay(1000);
+
+  lcd.setCursor(0,0);
+  lcd.print("R:  ");
+  lcd.print("G:  ");
+  lcd.print("B:        ");
+  lcd.setCursor(0,1);
+  lcd.print("            A     ");
+
+  pinMode(RED_LED_PIN, OUTPUT);
+  pinMode(GREEN_LED_PIN, OUTPUT);
+  pinMode(BLUE_LED_PIN, OUTPUT);
+
+  pinMode(S1_PIN, INPUT);
+  pinMode(S2_PIN, INPUT);
+}
+
+void setColor() {
+  analogWrite(RED_LED_PIN, i);
+  analogWrite(GREEN_LED_PIN, j);
+  analogWrite(BLUE_LED_PIN, k);
+}
+
+void loop() {
+  bool S1_state = digitalRead(S1_PIN);
+  bool S2_state = digitalRead(S2_PIN);
+  bool S3_state = digitalRead(S3_PIN);
+
+int poti = analogRead(15);
+poti = map(poti, 0, 1024, 0, 255);
+lcd.setCursor(13,1);
+lcd.print(poti);
+lcd.print("   ");
+
+  if((S1_state==S1_wasPressed) && (S2_state==S2_wasPressed) && (S3_state == S3_wasPressed)){
+    return;
+  }
+
+  if (S1_state == true) {
+    i = analogRead(15);
+    i = map(i, 0, 1024, 0, 255);
+    lcd.setCursor(0,1);
+    lcd.print("   ");
+    lcd.setCursor(0,1);
+    lcd.print(i);
+    setColor();
+  }
+
+  else if(S2_state == true) {
+    j = analogRead(15);
+    j = map(j, 0, 1024, 0, 255);
+    lcd.setCursor(4,1);
+    lcd.print("   ");
+    lcd.setCursor(4,1);
+    lcd.print(j);
+    setColor();
+  }
+
+  else if (S3_state == true) {
+    k = analogRead(15);
+    k = map(k, 0, 1024, 0, 255);
+    lcd.setCursor(8,1);
+    lcd.print("   ");
+    lcd.setCursor(8,1);
+    lcd.print(k);
+    setColor();
+  }
+
+  S1_wasPressed = S1_state;
+  S2_wasPressed = S2_state;
+  S3_wasPressed = S3_state;
+}
+
